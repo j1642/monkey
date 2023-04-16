@@ -29,7 +29,7 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
-    l.skipWhitespace()
+	l.skipWhitespace()
 
 	switch l.ch {
 	case '=':
@@ -58,6 +58,11 @@ func (l *Lexer) NextToken() token.Token {
 			// Early return b/c readIdentifier() advanced readPosition
 			// the end of the current identifier.
 			return tok
+		} else if isDigit(l.ch) {
+			// Does not support floats, hex, etc.
+			tok.Type = token.INT
+			tok.Literal = l.readNumber()
+			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
@@ -68,9 +73,9 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 func (l *Lexer) skipWhitespace() {
-    for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
-        l.readChar()
-    }
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readChar()
+	}
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
@@ -88,4 +93,16 @@ func (l *Lexer) readIdentifier() string {
 func isLetter(ch byte) bool {
 	// Underscores valid as part of a variable/function name.
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
+}
+
+func (l *Lexer) readNumber() string {
+	position := l.position
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
 }
