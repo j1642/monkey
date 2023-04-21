@@ -1,6 +1,9 @@
 package ast
 
-import "monkey/token"
+import (
+	"bytes"
+	"monkey/token"
+)
 
 type Node interface {
 	TokenLiteral() string
@@ -55,7 +58,7 @@ func (ls *LetStatement) String() string {
 		out.WriteString(ls.Value.String())
 	}
 	out.WriteString(";")
-	return out.string()
+	return out.String()
 }
 
 // Identifier implements "Node" and "Expression" interface
