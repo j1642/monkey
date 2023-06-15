@@ -48,7 +48,8 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpAdd:
-			// Assumes the right infix operand is the last val on the stack.
+			// Assumes the right infix operand was the final value added
+			// to  the stack.
 			right := vm.pop()
 			left := vm.pop()
 			leftValue := left.(*object.Integer).Value
